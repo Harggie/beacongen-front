@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
-import counter from './counter';
+import login from './login';
+import buildings from './buildings';
 
 export default combineReducers({
   routing: routerReducer,
-  counter
+  login,
+  buildings
 });

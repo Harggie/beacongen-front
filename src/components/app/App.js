@@ -1,24 +1,23 @@
 import React from 'react';
-import { Route, Link } from 'react-router-dom'
-import Home from '../home/Home'
+import { Route, Link } from 'react-router-dom';
+import Home from '../home/Home';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import AppBar from 'material-ui/AppBar';
-import FlatButton from 'material-ui/FlatButton';
+import Login from '../login/Login';
+import Menu from '../menu/Menu';
+import Building from '../buildings/Building'
+import Buildings from '../buildings/Buildings'
 
 const App = () => (
   <MuiThemeProvider>
     <div>
-      <AppBar
-        title={"Heatmap generator"}
-        iconElementRight={
-          <Link to="/"><FlatButton label="Home" /></Link>
-      }
-      />
-
       <header>
+        <Menu />
       </header>
       <main>
         <Route exact path="/" component={Home} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/buildings/:id" component={Building} />
+        <Route exact path="/buildings" component={Buildings} />
       </main>
     </div>
   </MuiThemeProvider>
