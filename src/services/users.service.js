@@ -1,4 +1,4 @@
-import { baseUrl, authHeader } from '../helpers/auth-header';
+import { baseUrl } from '../helpers/auth-header';
 
 export const userService = {
     login,

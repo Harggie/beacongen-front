@@ -1,22 +1,23 @@
 import { baseUrl, authHeader } from '../helpers/auth-header';
 
-export const buildingService = {
+export const floorService = {
     getAll,
     getSingle,
     createNew,
     update,
-    remove
+    remove,
+    upload
 }
 
-const endpoint = baseUrl + '/buildings';
+const endpoint = baseUrl + '/floors';
 
-function getAll() {
+function getAll(buildingId) {
     const requestOptions = {
         method: 'GET',
         headers: authHeader()
     };
 
-    return fetch(endpoint, requestOptions)
+    return fetch(endpoint + '/building/' + buildingId, requestOptions)
         .then(response => {
             if (!response.ok) {
                 return Promise.reject(response.statusText);
@@ -31,7 +32,7 @@ function getSingle(id) {
         method: 'GET',
         headers: authHeader()
     };
-    
+
     return fetch(endpoint + '/' + id, requestOptions)
         .then(response => {
             if (!response.ok) {
@@ -45,7 +46,7 @@ function getSingle(id) {
 function createNew(data) {
     const requestOptions = {
         method: 'POST',
-        headers: Object.assign(authHeader(), {'content-type': 'application/json'}),
+        headers: Object.assign(authHeader(), { 'content-type': 'application/json' }),
         body: JSON.stringify(data)
     };
 
@@ -62,7 +63,7 @@ function createNew(data) {
 function update(id, data) {
     const requestOptions = {
         method: 'PATCH',
-        headers: Object.assign(authHeader(), {'content-type': 'application/json'}),
+        headers: Object.assign(authHeader(), { 'content-type': 'application/json' }),
         body: JSON.stringify(data)
     };
 
@@ -83,6 +84,27 @@ function remove(id) {
     };
 
     return fetch(endpoint + '/' + id, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response.statusText);
+            }
+
+            return response.json();
+        });
+}
+
+function upload(id, file) {
+
+    let form = new FormData();
+    form.append('file', file);
+
+    const requestOptions = {
+        method: 'POST',
+        headers: authHeader(),
+        body: form
+    };
+
+    return fetch(endpoint + '/' + id + '/upload', requestOptions)
         .then(response => {
             if (!response.ok) {
                 return Promise.reject(response.statusText);

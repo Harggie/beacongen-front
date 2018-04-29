@@ -3,62 +3,53 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { buildingActions } from '../../actions/buildings.actions';
 import { push } from 'react-router-redux';
-
-import {
-    Table,
-    TableBody,
-    TableHeader,
-    TableHeaderColumn,
-    TableRow,
-    TableRowColumn,
-} from 'material-ui/Table';
-import RaisedButton from 'material-ui/RaisedButton';
-
-const editRowStyle = {width: 150};
+import Grid from '../shared/Grid';
 
 class Buildings extends React.Component {
 
     constructor(props) {
         super(props);
         this.props.getAll();
+
+        this.handleNew = this.handleNew.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+    }
+
+    handleNew() {
+        this.props.dispatch(push('/buildings/new'));
     }
 
     handleEdit(entityId) {
-        this.props.dispatch(push('/buildings/' + entityId))
+        this.props.dispatch(push('/buildings/building/' + entityId))
     }
 
     handleDelete(entityId) {
-        console.log(entityId);
+        this.props.remove(entityId);
     }
 
     render() {
         return (
             <div className="container">
-                <div className="col-sm-12" style={{ marginTop: 50 }}>
-                    <Table>
-                        <TableHeader
-                            adjustForCheckbox={false}
-                            displaySelectAll={false}>
-                            <TableRow>
-                                <TableHeaderColumn>Title</TableHeaderColumn>
-                                <TableHeaderColumn>Description</TableHeaderColumn>
-                                <TableHeaderColumn style={editRowStyle}></TableHeaderColumn>
-                                <TableHeaderColumn style={editRowStyle}></TableHeaderColumn>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody displayRowCheckbox={false}>
-                            {this.props.buildings ? this.props.buildings.map(building => {
-                                return (
-                                    <TableRow key={building._id}>
-                                        <TableRowColumn>{building.title}</TableRowColumn>
-                                        <TableRowColumn>{building.description}</TableRowColumn>
-                                        <TableRowColumn style={editRowStyle}><RaisedButton label="Edit" primary={true} onClick={event => this.handleEdit(building._id)} /></TableRowColumn>
-                                        <TableRowColumn style={editRowStyle}><RaisedButton label="Delete" secondary={true} onClick={event => this.handleEdit(building._id)} /></TableRowColumn>
-                                    </TableRow>
-                                );
-                            }) : 'There are no added buildings'}
-                        </TableBody>
-                    </Table>
+                <div className="row" style={{ marginTop: 50 }}>
+                    <div className="col-sm-12">
+                        <h1>Buildings list</h1>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-sm-12" style={{ marginTop: 50 }}>
+                        {this.props.buildings ?
+                            <Grid
+                                columnsHeaders={['Title', 'Description']}
+                                columnsProperties={['title', 'description']}
+                                showEdit={true}
+                                showDelete={true}
+                                entities={this.props.buildings}
+                                createHandler={this.handleNew}
+                                editHandler={this.handleEdit}
+                                deleteHandler={this.handleDelete}
+                            /> : 'There are no added buildings'}
+                    </div>
                 </div>
             </div>
         );
@@ -72,7 +63,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => {
     return {
         dispatch,
-        getAll: () => dispatch(buildingActions.getAll())
+        getAll: () => dispatch(buildingActions.getAll()),
+        remove: (id) => dispatch(buildingActions.remove(id)),
     };
 };
 
