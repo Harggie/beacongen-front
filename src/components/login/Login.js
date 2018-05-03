@@ -48,7 +48,7 @@ class Login extends React.Component {
 		const { username, password } = this.state;
 
 		return (
-			<div class="col-sm-12">
+			<div className="col-sm-12">
 				<Paper style={paperStyle} zDepth={4}>
 					<form name="form" onSubmit={this.handleSubmit}>
 						<TextField

@@ -8,7 +8,6 @@ import {
     TableRow,
     TableRowColumn,
 } from 'material-ui/Table';
-import RaisedButton from 'material-ui/RaisedButton';
 
 import ContentAddCircle from 'material-ui/svg-icons/content/add-circle';
 import EditorModeEdit from 'material-ui/svg-icons/editor/mode-edit';

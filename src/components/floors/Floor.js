@@ -9,6 +9,8 @@ import Floors from '../floors/Floors';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 
+import Map from '../map/Map';
+
 class Floor extends React.Component {
 
     constructor(props) {
@@ -147,7 +149,7 @@ class Floor extends React.Component {
                                 <input name="map_file" type="file" onChange={event => this.handleUpload(event)} />
                             </div>
                         }
-                        <img src={'http://localhost:8081' + svg_path} />
+                        <Map imgUrl={'http://localhost:8081' + svg_path} />
                     </div>
                 </div>
             </div>
