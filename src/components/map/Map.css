@@ -1,0 +1,16 @@
+.map-container {
+    position: relative;
+}
+
+.heatmap {
+    position:absolute!important;
+    top: 0;
+}
+
+.control-btn {
+    margin-right: 15px;
+}
+
+.tab-inner {
+    padding: 25px;
+}

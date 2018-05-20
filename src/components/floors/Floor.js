@@ -149,7 +149,11 @@ class Floor extends React.Component {
                                 <input name="map_file" type="file" onChange={event => this.handleUpload(event)} />
                             </div>
                         }
-                        <Map imgUrl={'http://localhost:8081' + svg_path} />
+                        <Map
+                            imgUrl={'http://localhost:8081' + svg_path}
+                            horizontalScale={scale_horizontal}
+                            verticalScale={scale_vertical}
+                        />
                     </div>
                 </div>
             </div>
