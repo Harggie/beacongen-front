@@ -20,12 +20,12 @@ class Floors extends React.Component {
         this.props.dispatch(push('/floors/new?building_id=' + this.props.buildingId));
     }
 
-    handleEdit(entityId) {
-        this.props.dispatch(push('/floors/floor/' + entityId))
+    handleEdit(entity) {
+        this.props.dispatch(push('/floors/floor/' + entity._id))
     }
 
-    handleDelete(entityId) {
-        this.props.remove(entityId);
+    handleDelete(entity) {
+        this.props.remove(entity._id);
     }
 
     render() {

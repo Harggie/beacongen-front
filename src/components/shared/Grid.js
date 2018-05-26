@@ -53,8 +53,8 @@ const Grid = (props) => (
                                 <TableRowColumn>{entity[property]}</TableRowColumn>
                             );
                         }) : 'columnProperties not defined'}
-                        {props.showEdit ? <TableRowColumn style={buttonColStyle}><EditorModeEdit color={blue500} hoverColor={greenA200} onClick={event => props.editHandler(entity._id)} /></TableRowColumn> : ''}
-                        {props.showDelete ? <TableRowColumn style={buttonColStyle}><ActionDelete color={red500} hoverColor={greenA200} onClick={event => props.deleteHandler(entity._id)} /></TableRowColumn> : ''}
+                        {props.showEdit ? <TableRowColumn style={buttonColStyle}><EditorModeEdit color={blue500} hoverColor={greenA200} onClick={event => props.editHandler(entity)} /></TableRowColumn> : ''}
+                        {props.showDelete ? <TableRowColumn style={buttonColStyle}><ActionDelete color={red500} hoverColor={greenA200} onClick={event => props.deleteHandler(entity)} /></TableRowColumn> : ''}
                     </TableRow>
                 );
             }) : 'entities not defined'}

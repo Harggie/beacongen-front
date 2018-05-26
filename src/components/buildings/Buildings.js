@@ -20,12 +20,12 @@ class Buildings extends React.Component {
         this.props.dispatch(push('/buildings/new'));
     }
 
-    handleEdit(entityId) {
-        this.props.dispatch(push('/buildings/building/' + entityId))
+    handleEdit(entity) {
+        this.props.dispatch(push('/buildings/building/' + entity._id))
     }
 
-    handleDelete(entityId) {
-        this.props.remove(entityId);
+    handleDelete(entity) {
+        this.props.remove(entity._id);
     }
 
     render() {

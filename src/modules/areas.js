@@ -20,6 +20,7 @@ export default (state = initialState, action) => {
                 entities: areas
             };
         case areasConstants.DELETE:
+            break;
             // areas = state.entities.filter((area) => {
             //     return area.id !== action.area.id
             // });
@@ -27,6 +28,7 @@ export default (state = initialState, action) => {
             //     entities: areas
             // };
         case areasConstants.RENAME:
+            break;
             // areas = state.entities.map((area) => {
             //     if (area.id === action.area.id) {
             //         area = action.area;

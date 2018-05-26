@@ -151,6 +151,7 @@ class Floor extends React.Component {
                         }
                         <Map
                             imgUrl={'http://localhost:8081' + svg_path}
+                            floorId={this.props.match.params.id}
                             horizontalScale={scale_horizontal}
                             verticalScale={scale_vertical}
                         />
