@@ -4,8 +4,12 @@ import { bindActionCreators } from 'redux';
 import { areasActions } from '../../actions/areas.actions';
 import { beaconsActions } from '../../actions/beacons.actions';
 import { dialogActions } from '../../actions/dialog.actions';
+import { floorActions } from '../../actions/floors.actions';
+
 import { paper } from 'paper';
 import h337 from 'heatmap.js';
+import jspdf from 'jspdf';
+
 import './Map.css';
 
 import RaisedButton from 'material-ui/RaisedButton';
@@ -19,8 +23,11 @@ class Map extends React.Component {
     constructor(props) {
         super(props);
 
-        this.savedBeacons = [];
+        this.currentTab = 'heatmap';
+
+        this.currentBeacons = [];
         window.beaconMode = false;
+        window.showHeatmap = true;
 
         // this.savedPaths = [];
         // window.drawMode = false;
@@ -34,10 +41,15 @@ class Map extends React.Component {
 
         this.handleBeaconRemoval = this.handleBeaconRemoval.bind(this);
 
+        this.generatePdf = this.generatePdf.bind(this);
+        this.switchTab = this.switchTab.bind(this);
+        this.handleHeatmapTab = this.handleHeatmapTab.bind(this);
+        this.generateHeatmap = this.generateHeatmap.bind(this);
+
     }
 
     componentDidMount() {
-        paper.setup(document.getElementById('map-canvas'));
+        paper.setup(document.querySelector('.map-canvas'));
 
         let raster = new paper.Raster('map-img');
         raster.position = paper.view.center;
@@ -54,51 +66,66 @@ class Map extends React.Component {
             if (window.beaconMode) {
                 let beacon = new paper.Raster('beacon-img');
                 beacon.position = event.point;
-                that.props.createBeacon(that.newBeacon(event.point));
+                that.currentBeacons.push(beacon);
+                that.props.createBeacon(that.newBeacon(beacon));
             }
         }
     }
 
-    componentWillReceiveProps() {
-        console.log('props are', this.props);
+    generatePdf() {
+        let doc = new jspdf();
+
+        let heatmap = document.querySelector('.heatmap-canvas');
+        let backgroundmap = document.querySelector('.map-canvas');
+
+
+        window.backgroundmap = backgroundmap;
+
+        console.log(backgroundmap);
+
+        // let heatmapImg = heatmap.toDataURL('image/png');
+        let backgroundmapImg = backgroundmap.toDataURL('image/png');
+
+        // doc.text('hello', 10, 10);
+
+
+        // doc.addImage(backgroundmapImg, 'PNG', 10, 10);
+        // doc.addImage(heatmapImg, 'PNG', 10, 10);
+
+        // doc.save('heatmap-' + this.props.floorId + '.pdf');
     }
 
     getFloorBeacons() {
         this.props.getBeacons(this.props.floorId);
+        this.switchTab('beacons');
+        let that = this;
+        setTimeout(function () {
+            that.props.beacons.forEach(function (beacon) {
+                let renderedBeacon = new paper.Raster('beacon-img');
+                renderedBeacon.position = new paper.Point(beacon.x, beacon.y);
+                that.currentBeacons.push(renderedBeacon);
+            });
+        }, 500);
     }
 
     generateHeatmap() {
+        this.props.getPoints(this.props.floorId);
+
         let heatmapInstance = h337.create({
             container: document.querySelector('.heatmap')
         });
 
-        let data = {
-            max: 3,
-            data: [
-                {
-                    x: Math.floor(5.344345391975285 * 50),
-                    y: Math.floor(0.7790583639580679 * 50),
-                    value: 1
-                },
-                {
-                    x: Math.floor(4.946236660643907 * 50),
-                    y: Math.floor(1.1931467026757911 * 50),
-                    value: 1
-                },
-                {
-                    x: Math.floor(4.694913834454245 * 50),
-                    y: Math.floor(1.3572610773447384 * 50),
-                    value: 1
-                },
-                {
-                    x: Math.floor(7.818976143855717 * 50),
-                    y: Math.floor(2.7459567110353404 * 50),
-                    value: 1
-                },
-            ]
-        }
+        let that = this;
 
-        heatmapInstance.setData(data);
+        setTimeout(function () {
+            let data = {
+                max: 3,
+                data: that.props.floors.points
+            };
+
+            console.log('settingInstace', data.data);
+            heatmapInstance.setData(data);
+        }, 1500);
     }
 
     toggleHeatmap() {
@@ -116,13 +143,13 @@ class Map extends React.Component {
         window.beaconMode = !window.beaconMode;
     }
 
-    newBeacon(point) {
+    newBeacon(paperBeacon) {
         const beacon = {
             name: 'Beacon',
             address: '0:00:00:00',
-            x: point.x,
-            y: point.y,
-            floor_id: this.props.floorId
+            x: paperBeacon.position.x,
+            y: paperBeacon.position.y,
+            floor_id: this.props.floorId,
         };
         return beacon;
     }
@@ -160,10 +187,20 @@ class Map extends React.Component {
     //     return path;
     // }
 
-    handleBeaconEdit(beacon){
-        this.props.openDialog(beacon);
+    switchTab(tab) {
+        this.currentTab = tab;
+        let that = this;
+        if (tab != 'beacons') {
+            this.currentBeacons.forEach(function (currentBeacon) {
+                currentBeacon.remove();
+            });
+            this.currentBeacons = [];
+        }
     }
 
+    handleBeaconEdit(beacon) {
+        this.props.openDialog(beacon);
+    }
 
     handleBeaconEditForm(e) {
         e.preventDefault();
@@ -178,6 +215,17 @@ class Map extends React.Component {
 
     handleBeaconRemoval(beacon) {
         this.props.removeBeacon(beacon._id);
+        let that = this;
+        this.currentBeacons.forEach(function (currentBeacon) {
+            if (beacon.x == currentBeacon.position.x && beacon.y == currentBeacon.position.y) {
+                currentBeacon.remove();
+                that.currentBeacons.pop(currentBeacon);
+            }
+        });
+    }
+
+    handleHeatmapTab() {
+        this.switchTab('heatmap');
     }
 
     render() {
@@ -185,12 +233,15 @@ class Map extends React.Component {
             <div>
                 <img id="map-img" hidden={true} src={this.props.imgUrl} />
                 <img id="beacon-img" hidden={true} src="/images/beacon.png" />
-
                 <Tabs>
-                    <Tab label="Heatmap">
+                    <Tab
+                        label="Heatmap"
+                        onActive={this.handleHeatmapTab}
+                    >
                         <div className="tab-inner">
                             <RaisedButton className="control-btn" onClick={this.generateHeatmap} label="Generate heatmap" primary={true} />
                             <RaisedButton className="control-btn" onClick={this.toggleHeatmap} label="Toggle heatmap" primary={true} />
+                            <RaisedButton className="control-btn" onClick={this.generatePdf} label="Download PDF" primary={true} />
                         </div>
                     </Tab>
                     <Tab
@@ -263,8 +314,8 @@ class Map extends React.Component {
                     </form>
                 </Dialog>
                 <div className="map-container">
-                    <canvas id="map-canvas" width="1000" height="1000"></canvas>
-                    <div className="heatmap" style={{ width: 750, height: 750, display: 'none' }}></div>
+                    <canvas className="map-canvas" width="1000" height="1000"></canvas>
+                    <div className="heatmap" style={{ width: 1000, height: 1000 }}></div>
                 </div>
             </div>
         );
@@ -274,6 +325,7 @@ class Map extends React.Component {
 const mapStateToProps = state => ({
     // areas: state.areas.entities,
     beacons: state.beacons.entities,
+    floors: state.floors,
     // wholeAreas: state.areas,
     wholeBeacons: state.beacons,
     dialogState: state.dialog
@@ -288,7 +340,8 @@ const mapDispatchToProps = dispatch => {
         removeBeacon: beaconsActions.remove,
         openDialog: dialogActions.open,
         closeDialog: dialogActions.close,
-        inputChangeDialog: dialogActions.inputChange
+        inputChangeDialog: dialogActions.inputChange,
+        getPoints: floorActions.getPoints
     }, dispatch);
 };
 

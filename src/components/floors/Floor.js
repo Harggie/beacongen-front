@@ -59,6 +59,7 @@ class Floor extends React.Component {
             let building_id = queryString.parse(this.props.location.search).building_id;
             this.props.createNew(Object.assign(this.state, { building_id: building_id }));
         } else {
+            console.log(this.state);
             this.props.update(this.props.match.params.id, this.state);
         }
     }
@@ -149,12 +150,14 @@ class Floor extends React.Component {
                                 <input name="map_file" type="file" onChange={event => this.handleUpload(event)} />
                             </div>
                         }
-                        <Map
-                            imgUrl={'http://localhost:8081' + svg_path}
-                            floorId={this.props.match.params.id}
-                            horizontalScale={scale_horizontal}
-                            verticalScale={scale_vertical}
-                        />
+                        {svg_path &&
+                            <Map
+                                imgUrl={'http://localhost:8081' + svg_path}
+                                floorId={this.props.match.params.id}
+                                horizontalScale={scale_horizontal}
+                                verticalScale={scale_vertical}
+                            />
+                        }
                     </div>
                 </div>
             </div>

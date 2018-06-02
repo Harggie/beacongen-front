@@ -8,7 +8,8 @@ export const floorActions = {
     createNew,
     update,
     remove,
-    upload
+    upload,
+    getPoints
 };
 
 function getAll(buildingId) {
@@ -113,4 +114,21 @@ function upload(id, file) {
 
     function success(floor) { return { type: floorsConstants.UPLOAD_SUCCESS, floor } }
     function failure(error) { return { type: floorsConstants.UPLOAD_FAILURE, error } }
+}
+
+function getPoints(id) {
+    return dispatch => {
+        floorService.points(id)
+            .then(
+                points => {
+                    dispatch(success(points));
+                },
+                error => {
+                    dispatch(failure(error));
+                }
+            );
+    };
+
+    function success(points) { return { type: floorsConstants.POINTS_SUCCESS, points } }
+    function failure(error) { return { type: floorsConstants.POINTS_FAILURE, error } }
 }

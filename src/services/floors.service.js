@@ -6,7 +6,8 @@ export const floorService = {
     createNew,
     update,
     remove,
-    upload
+    upload,
+    points,
 }
 
 const endpoint = baseUrl + '/floors';
@@ -110,6 +111,21 @@ function upload(id, file) {
                 return Promise.reject(response.statusText);
             }
 
+            return response.json();
+        });
+}
+
+function points(id) {
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader(),
+    };
+
+    return fetch(endpoint + '/' + id + '/points', requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response.statusText);
+            }
             return response.json();
         });
 }

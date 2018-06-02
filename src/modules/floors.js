@@ -15,7 +15,10 @@ export const floorsConstants = {
     DELETE_FAILURE: 'FLOORS_DELETE_FAILURE',
 
     UPLOAD_SUCCESS: 'FLOORS_UPLOAD_SUCCESS',
-    UPLOAD_FAILURE: 'FLOORS_UPLOAD_FAILURE'
+    UPLOAD_FAILURE: 'FLOORS_UPLOAD_FAILURE',
+
+    POINTS_SUCCESS: 'FLOORS_POINTS_SUCCESS',
+    POINTS_FAILURE: 'FLOORS_POINTS_FAILURE',
 };
 
 const initialState = {
@@ -77,6 +80,16 @@ export default (state = initialState, action) => {
                 entity: action.floor
             };
         case floorsConstants.UPLOAD_FAILURE:
+            return {
+                ...state,
+                error: action.error
+            };
+        case floorsConstants.POINTS_SUCCESS:
+            return {
+                ...state,
+                points: action.points
+            };
+        case floorsConstants.POINTS_FAILURE:
             return {
                 ...state,
                 error: action.error
